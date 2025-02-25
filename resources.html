@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Resources</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .resources-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: rgba(51, 51, 51, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #f97316;
+            margin-bottom: 30px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .resource-card {
+            background: rgba(37, 99, 235, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background: rgba(37, 99, 235, 0.2);
+        }
+
+        .resource-title {
+            font-size: 20px;
+            color: #f97316;
+            margin-bottom: 10px;
+        }
+
+        .resource-description {
+            color: #cbd5e1;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .resource-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .resource-link:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .download-btn {
+            background: #22c55e;
+        }
+
+        .download-btn:hover {
+            background: #16a34a;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="resources-container">
+        <h1>JavaScript Resources</h1>
+
+        <!-- Video Tutorials Section -->
+        <div class="section">
+            <h2>Video Tutorials</h2>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/PkZNo7MFNFg" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="resource-title">JavaScript Full Course</div>
+                    <div class="resource-description">Learn JavaScript programming from scratch with this comprehensive tutorial.</div>
+                </div>
+                <div class="resource-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/W6NZfCO5SIk" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="resource-title">JavaScript Fundamentals</div>
+                    <div class="resource-description">Master the basics of JavaScript with practical examples.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Downloads Section -->
+        <div class="section">
+            <h2>Code Downloads</h2>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-title">Calculator Project</div>
+                    <div class="resource-description">Download the complete source code for the calculator project.</div>
+                    <a href="downloads/calculator.zip" class="resource-link download-btn">Download Code</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">Tic Tac Toe Game</div>
+                    <div class="resource-description">Get the source code for the Tic Tac Toe game implementation.</div>
+                    <a href="downloads/tictactoe.zip" class="resource-link download-btn">Download Code</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- External Resources Section -->
+        <div class="section">
+            <h2>External Resources</h2>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-title">MDN Web Docs</div>
+                    <div class="resource-description">Comprehensive documentation and guides for JavaScript.</div>
+                    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" class="resource-link">Visit Site</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">W3Schools</div>
+                    <div class="resource-description">Interactive JavaScript tutorials and references.</div>
+                    <a href="https://www.w3schools.com/js/" target="_blank" class="resource-link">Visit Site</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">JavaScript.info</div>
+                    <div class="resource-description">Modern JavaScript tutorial from basics to advanced topics.</div>
+                    <a href="https://javascript.info/" target="_blank" class="resource-link">Visit Site</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Documents Section -->
+        <div class="section">
+            <h2>PDF Documents</h2>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-title">JavaScript Cheat Sheet</div>
+                    <div class="resource-description">Quick reference guide for JavaScript syntax and methods.</div>
+                    <a href="docs/js-cheatsheet.pdf" class="resource-link download-btn">Download PDF</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">JavaScript Best Practices</div>
+                    <div class="resource-description">Guide to writing clean and efficient JavaScript code.</div>
+                    <a href="docs/js-best-practices.pdf" class="resource-link download-btn">Download PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

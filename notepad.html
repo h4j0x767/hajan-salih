@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Editor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('https://images.unsplash.com/photo-1555099962-4199c345e5dd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .toolbar {
+            background: rgba(51, 51, 51, 0.95);
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .editor-container {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .CodeMirror {
+            height: calc(100vh - 140px);
+            border-radius: 15px;
+            padding: 10px;
+            font-size: 16px;
+            background: rgba(51, 51, 51, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        select, button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(37, 99, 235, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .theme-switch {
+            background: rgba(249, 115, 22, 0.9);
+        }
+
+        .theme-switch:hover {
+            background: rgba(249, 115, 22, 1);
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+        }
+
+        .save-btn {
+            background: rgba(34, 197, 94, 0.9);
+        }
+
+        .save-btn:hover {
+            background: rgba(34, 197, 94, 1);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        select {
+            background: rgba(51, 51, 51, 0.9);
+        }
+
+        select:hover {
+            background: rgba(68, 68, 68, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <select id="language" onchange="changeLanguage()">
+            <option value="javascript">JavaScript</option>
+            <option value="html">HTML</option>
+            <option value="css">CSS</option>
+            <option value="python">Python</option>
+            <option value="php">PHP</option>
+        </select>
+        <button class="theme-switch" onclick="toggleTheme()">Toggle Theme</button>
+        <button class="save-btn" onclick="saveCode()">Save</button>
+    </div>
+    
+    <div class="editor-container">
+        <textarea id="code"></textarea>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+
+    <script>
+        let editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            lineNumbers: true,
+            theme: "dracula",
+            mode: "javascript",
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            indentUnit: 4,
+            tabSize: 4,
+            lineWrapping: true,
+            autofocus: true
+        });
+
+        let isDark = true;
+
+        function toggleTheme() {
+            isDark = !isDark;
+            editor.setOption("theme", isDark ? "dracula" : "default");
+        }
+
+        function changeLanguage() {
+            const language = document.getElementById("language").value;
+            editor.setOption("mode", language);
+        }
+
+        function saveCode() {
+            const code = editor.getValue();
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'code.' + document.getElementById("language").value;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Load saved code if exists
+        const savedCode = localStorage.getItem('savedCode');
+        if (savedCode) {
+            editor.setValue(savedCode);
+        }
+
+        // Auto-save code every 30 seconds
+        setInterval(() => {
+            localStorage.setItem('savedCode', editor.getValue());
+        }, 30000);
+    </script>
+</body>
+</html> 

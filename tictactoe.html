@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('https://images.unsplash.com/photo-1611996575749-79a3a250f948?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .game-container {
+            background: rgba(51, 51, 51, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .status {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            background: rgba(68, 68, 68, 0.9);
+            border: none;
+            border-radius: 10px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cell:hover {
+            background: rgba(85, 85, 85, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .cell.x {
+            color: #f97316;
+        }
+
+        .cell.o {
+            color: #2563eb;
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .winning-line {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        @keyframes winAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .winner {
+            animation: winAnimation 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="status" id="status">X's Turn</div>
+        <div class="board" id="board">
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+            <button class="cell" data-cell></button>
+        </div>
+        <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+    </div>
+
+    <script>
+        const X_CLASS = 'x';
+        const O_CLASS = 'o';
+        const cells = document.querySelectorAll('[data-cell]');
+        const status = document.getElementById('status');
+        let xIsNext = true;
+        let gameActive = true;
+
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+
+        cells.forEach(cell => {
+            cell.addEventListener('click', handleClick, { once: true });
+        });
+
+        function handleClick(e) {
+            if (!gameActive) return;
+            
+            const cell = e.target;
+            const currentClass = xIsNext ? X_CLASS : O_CLASS;
+            
+            placeMark(cell, currentClass);
+            
+            if (checkWin(currentClass)) {
+                endGame(false);
+            } else if (isDraw()) {
+                endGame(true);
+            } else {
+                swapTurns();
+                updateStatus();
+            }
+        }
+
+        function placeMark(cell, currentClass) {
+            cell.classList.add(currentClass);
+            cell.textContent = currentClass.toUpperCase();
+        }
+
+        function swapTurns() {
+            xIsNext = !xIsNext;
+        }
+
+        function updateStatus() {
+            status.textContent = `${xIsNext ? "X" : "O"}'s Turn`;
+        }
+
+        function checkWin(currentClass) {
+            return winningCombinations.some(combination => {
+                return combination.every(index => {
+                    return cells[index].classList.contains(currentClass);
+                });
+            });
+        }
+
+        function isDraw() {
+            return [...cells].every(cell => {
+                return cell.classList.contains(X_CLASS) || 
+                       cell.classList.contains(O_CLASS);
+            });
+        }
+
+        function endGame(draw) {
+            gameActive = false;
+            if (draw) {
+                status.textContent = "Draw!";
+            } else {
+                const winner = xIsNext ? "X" : "O";
+                status.textContent = `${winner} Wins!`;
+                highlightWinner(winner);
+            }
+        }
+
+        function highlightWinner(winner) {
+            const winningCells = [...cells].filter(cell => 
+                cell.classList.contains(winner.toLowerCase())
+            );
+            winningCells.forEach(cell => cell.classList.add('winner'));
+        }
+
+        function resetGame() {
+            cells.forEach(cell => {
+                cell.classList.remove(X_CLASS, O_CLASS, 'winner');
+                cell.textContent = '';
+                cell.addEventListener('click', handleClick, { once: true });
+            });
+            xIsNext = true;
+            gameActive = true;
+            updateStatus();
+        }
+    </script>
+</body>
+</html> 

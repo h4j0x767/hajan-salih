@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Quiz</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('https://images.unsplash.com/photo-1516116216624-53e697fedbea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .quiz-container {
+            background: rgba(51, 51, 51, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .timer {
+            font-size: 24px;
+            color: #f97316;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 18px;
+            color: #2563eb;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            padding: 15px;
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: rgba(37, 99, 235, 0.2);
+            transform: translateX(10px);
+        }
+
+        .option.correct {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .option.wrong {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .next-btn {
+            width: 100%;
+            padding: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .result {
+            text-align: center;
+            display: none;
+        }
+
+        .result h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .result-score {
+            font-size: 48px;
+            color: #f97316;
+            margin-bottom: 30px;
+        }
+
+        .restart-btn {
+            background: #22c55e;
+        }
+
+        .restart-btn:hover {
+            background: #16a34a;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="quiz" class="fade-in">
+            <div class="quiz-header">
+                <div class="timer" id="timer">Time: 30</div>
+                <div class="score" id="score">Score: 0</div>
+            </div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <button class="next-btn" onclick="nextQuestion()" id="next-btn">Next Question</button>
+        </div>
+        <div id="result" class="result fade-in">
+            <h2>Quiz Completed!</h2>
+            <div class="result-score" id="final-score">0/10</div>
+            <button class="next-btn restart-btn" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What is JavaScript?",
+                options: [
+                    "A programming language",
+                    "A markup language",
+                    "A styling language",
+                    "A database"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which keyword is used to declare variables in JavaScript?",
+                options: [
+                    "var",
+                    "let",
+                    "const",
+                    "All of the above"
+                ],
+                correct: 3
+            },
+            {
+                question: "What is the correct way to write a JavaScript array?",
+                options: [
+                    "var colors = 'red', 'green', 'blue'",
+                    "var colors = ['red', 'green', 'blue']",
+                    "var colors = (red, green, blue)",
+                    "var colors = {'red', 'green', 'blue'}"
+                ],
+                correct: 1
+            },
+            // Add more questions here
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timer;
+        let timeLeft = 30;
+
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+
+            document.getElementById('next-btn').style.display = 'none';
+            startTimer();
+        }
+
+        function checkAnswer(selected) {
+            clearInterval(timer);
+            const correct = questions[currentQuestion].correct;
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach(option => option.style.pointerEvents = 'none');
+            
+            if (selected === correct) {
+                options[selected].classList.add('correct');
+                score++;
+                document.getElementById('score').textContent = `Score: ${score}`;
+            } else {
+                options[selected].classList.add('wrong');
+                options[correct].classList.add('correct');
+            }
+            
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function startTimer() {
+            timeLeft = 30;
+            document.getElementById('timer').textContent = `Time: ${timeLeft}`;
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = `Time: ${timeLeft}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswer(-1);
+                }
+            }, 1000);
+        }
+
+        function showResult() {
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('final-score').textContent = `${score}/${questions.length}`;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('score').textContent = 'Score: 0';
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html> 
